@@ -56,10 +56,6 @@ app.get('/movie', (req, res) => {
    }
 })
 
-app.use((req,res) => {
-   res.send('Hello World!')
-})
-
 const PORT = 8000
 
 app.listen(PORT, () => {
