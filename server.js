@@ -1,6 +1,7 @@
 const express = require('express');
 const morgan = require('morgan');
 const MOVIES = require('./movie-api.json')
+require('dotenv').config()
 
 const app = express();
 
@@ -11,6 +12,7 @@ app.use(function validateBearerToken(req, res, next) {
    debugger
    const bearerToken = req.get('Authorization').split(' ')[1];
    const apiToken = process.env.API_TOKEN;
+   console.log(apiToken, bearerToken)
    if(!apiToken || bearerToken !== apiToken) {
       return res.status(401).json({ error: 'Unauthorized request' })
    }
