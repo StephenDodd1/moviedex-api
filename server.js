@@ -24,48 +24,47 @@ app.get('/movie', (req, res) => {
    const movieGenre = req.query.genre
    const movieCountry = req.query.country
    const movieAvgVote = Number(req.query.avg_vote)
-   debugger
    if (movieGenre) {
       const movieGenreSort = MOVIES.filter(movie => movie.genre === movieGenre)
       if (movieCountry){
          const movieCountrySort = movieGenreSort.filter(movie => movie.country === movieCountry)
          if (movieAvgVote) {
             const movieAvgVoteSort = movieCountrySort.filter(movie => movie.avg_vote === movieAvgVote)
-            const sortedMovies = movieAvgVoteSort.map(movie => movie.film_title)
-            res.send(`The movies matching this genre are: ${sortedMovies}`)
+            const sortedMovies = movieAvgVoteSort.map(movie => movie)
+            res.json(sortedMovies)
          }
          else {
-            const sortedMovies = movieCountrySort.map(movie => movie.film_title)
-            res.send(`The movies matching this genre are: ${sortedMovies}`)
+            const sortedMovies = movieCountrySort.map(movie => movie)
+            res.json(sortedMovies)         
          }
       }
       else if (!movieCountry) {
-         const sortedMovies = movieGenreSort.map(movie => movie.film_title)
-         res.send(`The movies matching this genre are: ${sortedMovies}`)
-      }
+         const sortedMovies = movieGenreSort.map(movie => movie)
+         res.json(sortedMovies)    
+      }  
    }
    else if (movieCountry){
       const movieCountrySort = MOVIES.filter(movie => movie.country === movieCountry)
       if (movieAvgVote) {
          const movieAvgVoteSort = movieCountrySort.filter(movie => movie.avg_vote === movieAvgVote)
-         const sortedMovies = movieAvgVoteSort.map(movie => movie.film_title)
-         res.send(`The movies matching this genre are: ${sortedMovies}`)
+         const sortedMovies = movieAvgVoteSort.map(movie => movie)
+         res.json(sortedMovies) 
       }
       else {
-         const sortedMovies = movieCountrySort.map(movie => movie.film_title)
-         res.send(`The movies matching this genre are: ${sortedMovies}`)
+         const sortedMovies = movieCountrySort.map(movie => movie)
+         res.json(sortedMovies) 
       }
    }
    else if (movieAvgVote) {
       const movieAvgVoteSort = MOVIES.filter(movie => movie.avg_vote === movieAvgVote)
-      const sortedMovies = movieAvgVoteSort.map(movie => movie.film_title)
-      res.send(`The movies matching this genre are: ${sortedMovies}`)
+      const sortedMovies = movieAvgVoteSort.map(movie => movie)
+      res.json(sortedMovies) 
    } 
    else {
       const rawMovies = MOVIES.map(movie => movie.film_title)
-      res.send(`The movies matching this genre are: ${rawMovies}`)
+      res.json(sortedMovies) 
    }
-})
+});
 
 app.use((error, req, res, next) => {
    let response
