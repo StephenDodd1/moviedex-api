@@ -4,8 +4,20 @@ const MOVIES = require('./movie-api.json')
 
 const app = express();
 
-app.use(morgan('dev'));
+const morganSetting = process.env.NODE_ENV === 'production' ? 'tiny' : 'common'
+app.use(morgan(morganSetting))
 
+app.use(function validateBearerToken(req, res, next) {
+   debugger
+   const bearerToken = req.get('Authorization').split(' ')[1];
+   const apiToken = process.env.API_TOKEN;
+   if(!apiToken || bearerToken !== apiToken) {
+      return res.status(401).json({ error: 'Unauthorized request' })
+   }
+   next()
+   })
+
+//logic to apply filters
 app.get('/movie', (req, res) => {
    const movieGenre = req.query.genre
    const movieCountry = req.query.country
@@ -14,7 +26,6 @@ app.get('/movie', (req, res) => {
    if (movieGenre) {
       const movieGenreSort = MOVIES.filter(movie => movie.genre === movieGenre)
       if (movieCountry){
-         console.log('ran first');
          const movieCountrySort = movieGenreSort.filter(movie => movie.country === movieCountry)
          if (movieAvgVote) {
             const movieAvgVoteSort = movieCountrySort.filter(movie => movie.avg_vote === movieAvgVote)
@@ -27,13 +38,11 @@ app.get('/movie', (req, res) => {
          }
       }
       else if (!movieCountry) {
-         console.log('ran second');
          const sortedMovies = movieGenreSort.map(movie => movie.film_title)
          res.send(`The movies matching this genre are: ${sortedMovies}`)
       }
    }
    else if (movieCountry){
-      console.log('ran first');
       const movieCountrySort = MOVIES.filter(movie => movie.country === movieCountry)
       if (movieAvgVote) {
          const movieAvgVoteSort = movieCountrySort.filter(movie => movie.avg_vote === movieAvgVote)
@@ -56,8 +65,6 @@ app.get('/movie', (req, res) => {
    }
 })
 
-const PORT = 8000
+const PORT = process.env.PORT || 8000
 
-app.listen(PORT, () => {
-   console.log(`server is listening on ${PORT}`)
-})
+app.listen(PORT)
