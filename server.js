@@ -31,39 +31,54 @@ app.get('/movie', (req, res) => {
          if (movieAvgVote) {
             const movieAvgVoteSort = movieCountrySort.filter(movie => Number(movie.avg_vote) >= movieAvgVote)
             const sortedMovies = movieAvgVoteSort.map(movie => movie)
-            res.json(sortedMovies)
-         }
+            if(sortedMovies.length !== 0){
+               res.json(sortedMovies) 
+            }
+            else res.send('There were 0 matches for this search')         }
          else {
             const sortedMovies = movieCountrySort.map(movie => movie)
-            res.json(sortedMovies)         
-         }
+            if(sortedMovies.length !== 0){
+               res.json(sortedMovies) 
+            }
+            else res.send('There were 0 matches for this search')         }
       }
       else if (!movieCountry && movieAvgVote) {
          const movieAvgVoteSort = movieGenreSort.filter(movie => Number(movie.avg_vote) >= movieAvgVote)
             const sortedMovies = movieAvgVoteSort.map(movie => movie)
-            res.json(sortedMovies)
-      }
+            if(sortedMovies.length !== 0){
+               res.json(sortedMovies) 
+            }
+            else res.send('There were 0 matches for this search')      }
       else {
          const sortedMovies = movieGenreSort.map(movie => movie)
-         res.json(sortedMovies)    
-      }  
+         if(sortedMovies.length !== 0){
+            res.json(sortedMovies) 
+         }
+         else res.send('There were 0 matches for this search')      }  
    }
    else if (movieCountry){
       const movieCountrySort = MOVIES.filter(movie => movie.country.toLowerCase().includes(movieCountry.toLowerCase()))
       if (movieAvgVote) {
          const movieAvgVoteSort = movieCountrySort.filter(movie => Number(movie.avg_vote) >= movieAvgVote)
          const sortedMovies = movieAvgVoteSort.map(movie => movie)
-         res.json(sortedMovies) 
-      }
+         if(sortedMovies.length !== 0){
+            res.json(sortedMovies) 
+         }
+         else res.send('There were 0 matches for this search')      }
       else {
          const sortedMovies = movieCountrySort.map(movie => movie)
-         res.json(sortedMovies) 
-      }
+         if(sortedMovies.length !== 0){
+            res.json(sortedMovies) 
+         }
+         else res.send('There were 0 matches for this search')      }
    }
    else if (movieAvgVote) {
       const movieAvgVoteSort = MOVIES.filter(movie => Number(movie.avg_vote) >= movieAvgVote)
       const sortedMovies = movieAvgVoteSort.map(movie => movie)
-      res.json(sortedMovies) 
+      if(sortedMovies.length !== 0){
+         res.json(sortedMovies) 
+      }
+      else res.send('There were 0 matches for this search')
    } 
    else if (!movieGenre) {
       const rawMovies = MOVIES.map(movie => movie)
