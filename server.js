@@ -85,8 +85,8 @@ app.get('/movie', (req, res) => {
       res.json(rawMovies) 
    }  
 });
-
-app.use((error, req, res, next) => {
+//Below is code to avoid publicly displaying errors outside production environment
+/*app.use((error, req, res, next) => {
    let response
    if (process.env.NODE_ENV === 'production') {
      response = { error: { message: 'server error' }}
@@ -94,7 +94,7 @@ app.use((error, req, res, next) => {
      response = { error }
    }
    res.status(500).json(response)
- })
+ })*/
 
 const PORT = process.env.PORT || 8000
 
