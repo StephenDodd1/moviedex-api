@@ -61,8 +61,8 @@ app.get('/movie', (req, res) => {
       res.json(sortedMovies) 
    } 
    else {
-      const rawMovies = MOVIES.map(movie => movie.film_title)
-      res.json(sortedMovies) 
+      const rawMovies = MOVIES.map(movie => movie)
+      res.json(rawMovies) 
    }
 });
 
