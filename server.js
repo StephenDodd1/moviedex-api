@@ -1,6 +1,6 @@
 const express = require('express');
 const morgan = require('morgan');
-const MOVIES = require('./movie-api.json')
+const MOVIES = require('./movie-api.json');
 require('dotenv').config()
 
 const app = express();
@@ -9,7 +9,6 @@ const morganSetting = process.env.NODE_ENV === 'production' ? 'tiny' : 'common'
 app.use(morgan(morganSetting))
 
 app.use(function validateBearerToken(req, res, next) {
-   debugger
    const bearerToken = req.get('Authorization').split(' ')[1];
    const apiToken = process.env.API_TOKEN;
    console.log(apiToken, bearerToken)
@@ -24,12 +23,13 @@ app.get('/movie', (req, res) => {
    const movieGenre = req.query.genre
    const movieCountry = req.query.country
    const movieAvgVote = Number(req.query.avg_vote)
+   console.log(movieGenre, movieCountry, movieAvgVote)
    if (movieGenre) {
-      const movieGenreSort = MOVIES.filter(movie => movie.genre === movieGenre)
-      if (movieCountry){
-         const movieCountrySort = movieGenreSort.filter(movie => movie.country === movieCountry)
+      const movieGenreSort = MOVIES.filter(movie => movie.genre.toLowerCase().includes(movieGenre.toLowerCase()))
+      if (movieCountry) {
+         const movieCountrySort = movieGenreSort.filter(movie => movie.country.toLowerCase().includes(movieCountry.toLowerCase()))
          if (movieAvgVote) {
-            const movieAvgVoteSort = movieCountrySort.filter(movie => movie.avg_vote === movieAvgVote)
+            const movieAvgVoteSort = movieCountrySort.filter(movie => Number(movie.avg_vote) >= movieAvgVote)
             const sortedMovies = movieAvgVoteSort.map(movie => movie)
             res.json(sortedMovies)
          }
@@ -38,15 +38,20 @@ app.get('/movie', (req, res) => {
             res.json(sortedMovies)         
          }
       }
-      else if (!movieCountry) {
+      else if (!movieCountry && movieAvgVote) {
+         const movieAvgVoteSort = movieGenreSort.filter(movie => Number(movie.avg_vote) >= movieAvgVote)
+            const sortedMovies = movieAvgVoteSort.map(movie => movie)
+            res.json(sortedMovies)
+      }
+      else {
          const sortedMovies = movieGenreSort.map(movie => movie)
          res.json(sortedMovies)    
       }  
    }
    else if (movieCountry){
-      const movieCountrySort = MOVIES.filter(movie => movie.country === movieCountry)
+      const movieCountrySort = MOVIES.filter(movie => movie.country.toLowerCase().includes(movieCountry.toLowerCase()))
       if (movieAvgVote) {
-         const movieAvgVoteSort = movieCountrySort.filter(movie => movie.avg_vote === movieAvgVote)
+         const movieAvgVoteSort = movieCountrySort.filter(movie => Number(movie.avg_vote) >= movieAvgVote)
          const sortedMovies = movieAvgVoteSort.map(movie => movie)
          res.json(sortedMovies) 
       }
@@ -56,14 +61,14 @@ app.get('/movie', (req, res) => {
       }
    }
    else if (movieAvgVote) {
-      const movieAvgVoteSort = MOVIES.filter(movie => movie.avg_vote === movieAvgVote)
+      const movieAvgVoteSort = MOVIES.filter(movie => Number(movie.avg_vote) >= movieAvgVote)
       const sortedMovies = movieAvgVoteSort.map(movie => movie)
       res.json(sortedMovies) 
    } 
-   else {
+   else if (!movieGenre) {
       const rawMovies = MOVIES.map(movie => movie)
       res.json(rawMovies) 
-   }
+   }  
 });
 
 app.use((error, req, res, next) => {
